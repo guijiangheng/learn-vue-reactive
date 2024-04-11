@@ -9,16 +9,20 @@ import { pop, push } from "./effect-scope.mjs";
 
 const isEqual = (a, b) => a === b || (isNaN(a) && isNaN(b));
 
-export const createReactive = (obj, isShallow = false) => {
+export const createReactive = (obj, isShallow = false, isReadOnly = false) => {
   return new Proxy(obj, {
     has(target, key) {
-      track(target, key);
+      if (!isReadOnly) {
+        track(target, key);
+      }
 
       return Reflect.has(target, key);
     },
 
     ownKeys(target) {
-      track(target, ITERATE_KEY);
+      if (!isReadOnly) {
+        track(target, ITERATE_KEY);
+      }
 
       return Reflect.ownKeys(target);
     },
@@ -26,17 +30,24 @@ export const createReactive = (obj, isShallow = false) => {
     get(target, key, receiver) {
       if (key === RAW_SYMBOL) return target;
 
-      track(target, key);
+      if (!isReadOnly) {
+        track(target, key);
+      }
 
       const result = Reflect.get(target, key, receiver);
 
       if (isShallow || typeof result !== "object" || result === null)
         return result;
 
-      return createReactive(result, true);
+      return createReactive(result, true, isReadOnly);
     },
 
     set(target, key, newValue, receiver) {
+      if (isReadOnly) {
+        console.warn(`attribute ${key} is readonly`);
+        return true;
+      }
+
       const oldValue = Reflect.get(target, key, receiver);
       const isOwnProperty = Object.prototype.hasOwnProperty.call(target, key);
       const type = isOwnProperty ? "SET" : "ADD";
@@ -50,6 +61,11 @@ export const createReactive = (obj, isShallow = false) => {
     },
 
     deleteProperty(target, key) {
+      if (isReadOnly) {
+        console.warn(`attribute ${key} is readonly`);
+        return true;
+      }
+
       const isOwnProperty = Object.prototype.hasOwnProperty.call(target, key);
       const result = Reflect.deleteProperty(target, key);
 

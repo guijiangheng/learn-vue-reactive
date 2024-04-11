@@ -3,7 +3,9 @@ import { createReactive, effect } from "./core.mjs";
 import { track, trigger } from "./deps.mjs";
 
 export const reactive = (obj) => createReactive(obj);
+export const readonly = (obj) => createReactive(obj, true, true);
 export const shallowReactive = (obj) => createReactive(obj, true);
+export const shallowReadonly = (obj) => createReactive(obj, true, true);
 
 const traverse = (value, seen = new Set()) => {
   if (typeof value !== "object" || value === null || seen.has(value)) return;
