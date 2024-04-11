@@ -12,6 +12,7 @@ export const flushJob = () => {
     jobQueue.forEach((job) => job());
   }).finally(() => {
     isFlushing = false;
+    jobQueue.clear();
   });
 };
 

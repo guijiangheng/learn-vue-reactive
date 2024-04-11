@@ -1,11 +1,12 @@
 import { p } from "./consts.mjs";
-import { createReactive, effect } from "./core.mjs";
-import { track, trigger } from "./deps.mjs";
+import { effect, track, trigger } from "./core.mjs";
 
-export const reactive = (obj) => createReactive(obj);
-export const readonly = (obj) => createReactive(obj, true, true);
-export const shallowReactive = (obj) => createReactive(obj, true);
-export const shallowReadonly = (obj) => createReactive(obj, true, true);
+export {
+  reactive,
+  readonly,
+  shallowReactive,
+  shallowReadonly,
+} from "./core.mjs";
 
 const traverse = (value, seen = new Set()) => {
   if (typeof value !== "object" || value === null || seen.has(value)) return;
@@ -73,11 +74,7 @@ export const watch = (source, cb, options = {}) => {
   const effectFn = effect(getter, {
     lazy: true,
     scheduler() {
-      if (options.flush === "post") {
-        p.then(job);
-      } else {
-        job();
-      }
+      p.then(job);
     },
   });
 

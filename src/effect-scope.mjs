@@ -1,9 +1,9 @@
 let activeEffect;
 const effectStack = [];
 
-export const push = (effectFn) => {
-  activeEffect = effectFn;
-  effectStack.push(effectFn);
+export const push = (effect) => {
+  activeEffect = effect;
+  effectStack.push(effect);
 };
 
 export const pop = () => {

@@ -1,5 +1,6 @@
 {
   "cSpell.words": [
     "consts"
-  ]
+  ],
+  "editor.defaultFormatter": "esbenp.prettier-vscode"
 }

@@ -1,16 +1,18 @@
 import { reactive, watch } from "./lib.mjs";
 
-const obj = reactive({ value: 1 });
+const obj = reactive([]);
 
 watch(
-  () => obj.value,
-  (value, old) => {
-    console.log(value, old);
-  },
-  { immediate: true, flush: "post" }
+  () => obj.length,
+  () => {
+    console.log(obj);
+  }
 );
 
 setTimeout(() => {
-  obj.value += 1;
-  obj.value += 1;
+  obj.push(1);
 }, 1000);
+
+setTimeout(() => {
+  obj.push(1);
+}, 2000);
